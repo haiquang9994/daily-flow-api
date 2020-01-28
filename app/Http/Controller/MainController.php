@@ -3,6 +3,7 @@
 namespace App\Http\Controller;
 
 use App\Service\DailyFlowService;
+use DateTime;
 
 class MainController extends ApiController
 {
@@ -52,16 +53,15 @@ class MainController extends ApiController
 
     protected function ___get()
     {
-        $page = max(1, intval($this->getQueryParam('page', '1')));
-        $items = $this->get(DailyFlowService::class)->paginate(10, ['*'], 'page', $page);
+        $date = DateTime::createFromFormat('Y-m-d', $this->getQueryParam('date', null));
+        if (!$date) {
+            $date = new DateTime();
+        }
+        $date = $date->format('Y-m-d');
+        $range = ["$date 00:00:00", "$date 23:59:59"];
+        $items = $this->get(DailyFlowService::class)->orderBy('id', 'desc')->whereBetween('created_at', $range)->get();
         return [
             'status' => true,
-            'meta' => [
-                'total' => $items->total(),
-                'lastPage' => $items->lastPage(),
-                'perPage' => $items->perPage(),
-                'currentPage' => $items->currentPage(),
-            ],
             'data' => $items->map(function ($item) {
                 return [
                     'id' => $item->id,
