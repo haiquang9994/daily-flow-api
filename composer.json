@@ -16,7 +16,9 @@
         "vlucas/phpdotenv": "^2.4",
         "pho/pho": "^2.0",
         "predis/predis": "^1.1",
-        "robmorgan/phinx": "^0.10.8"
+        "robmorgan/phinx": "^0.10.8",
+        "evenement/evenement": "^3.0",
+        "illuminate/pagination": "5.8"
     },
     "autoload": {
         "psr-4": {

@@ -1,9 +1,8 @@
 <?php
+
 namespace App\Http\Controller;
 
-use Pho\Http\Controller;
-
-class Home extends Controller
+class HomeController extends BaseController
 {
     public function index()
     {
