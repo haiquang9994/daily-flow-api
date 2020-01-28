@@ -2,6 +2,7 @@
 
 namespace App\Http\Controller;
 
+use App\Lib\TimeZone\TimeZone;
 use App\Service\DailyFlowService;
 use DateTime;
 
@@ -24,12 +25,14 @@ class MainController extends ApiController
                 'content' => $content,
             ]);
             $item->save();
+            $created_at = $item->created_at instanceof DateTime ?
+                $this->get(TimeZone::class)->toClient($item->created_at->format('Y-m-d H:i:s'), -420) : null;
             return [
                 'status' => true,
                 'data' => [
                     'id' => $item->id,
                     'content' => $item->content,
-                    'created_at' => $item->created_at instanceof DateTime ? $item->created_at->format('Y-m-d H:i:s') : null,
+                    'created_at' => $created_at,
                 ],
             ];
         }
@@ -72,15 +75,17 @@ class MainController extends ApiController
             $date = new DateTime();
         }
         $date = $date->format('Y-m-d');
-        $range = ["$date 00:00:00", "$date 23:59:59"];
+        $range = [$this->get(TimeZone::class)->toServer("$date 00:00:00", -420), $this->get(TimeZone::class)->toServer("$date 23:59:59", -420)];
         $items = $this->get(DailyFlowService::class)->orderBy('id', 'desc')->whereBetween('created_at', $range)->get();
         return [
             'status' => true,
             'data' => $items->map(function ($item) {
+                $created_at = $item->created_at instanceof DateTime ?
+                    $this->get(TimeZone::class)->toClient($item->created_at->format('Y-m-d H:i:s'), -420) : null;
                 return [
                     'id' => $item->id,
                     'content' => $item->content,
-                    'created_at' => $item->created_at instanceof DateTime ? $item->created_at->format('Y-m-d H:i:s') : null,
+                    'created_at' => $created_at,
                 ];
             })->all(),
         ];
