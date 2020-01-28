@@ -66,6 +66,7 @@ class MainController extends ApiController
                 return [
                     'id' => $item->id,
                     'content' => $item->content,
+                    'created_at' => $item->created_at instanceof DateTime ? $item->created_at->format('Y-m-d H:i:s') : null,
                 ];
             })->all(),
         ];
