@@ -7,6 +7,15 @@ use DateTime;
 
 class MainController extends ApiController
 {
+    /** Action */
+    public function login()
+    {
+        $secret = $this->getJsonData('secret', '');
+        return $this->json([
+            'status' => $secret === md5(env('SECRET_TOKEN')),
+        ]);
+    }
+
     protected function ___post()
     {
         $content = $this->getJsonData('content', '');
@@ -17,6 +26,11 @@ class MainController extends ApiController
             $item->save();
             return [
                 'status' => true,
+                'data' => [
+                    'id' => $item->id,
+                    'content' => $item->content,
+                    'created_at' => $item->created_at instanceof DateTime ? $item->created_at->format('Y-m-d H:i:s') : null,
+                ],
             ];
         }
         return [

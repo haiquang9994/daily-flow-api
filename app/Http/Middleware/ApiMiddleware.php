@@ -16,7 +16,7 @@ class ApiMiddleware
         if ($token === null) {
             $token = $request->query->get('_token');
         }
-        if (is_string($token) && $token === env('SECRET_TOKEN', 'there is no secret token')) {
+        if (is_string($token) && $token === md5(env('SECRET_TOKEN', 'there is no secret token'))) {
             return;
         }
         return new JsonResponse([

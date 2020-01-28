@@ -17,6 +17,7 @@ class Router extends RouteLoader
     {
         $routing->get('/', $this->to('Home', 'index'), 'home');
 
+        $routing->post('/api/v1/daily-flow-login', $this->to('Main', 'login'), 'api_daily_flow_login');
         $routing->group('/api/v1', function ($group) {
             $group->map('GET|POST', '/daily-flow', $this->to('Main', 'index'), 'api_daily_flow');
             $group->map('GET|PUT|DELETE', '/daily-flow/{id}', $this->to('Main', 'index'), 'api_daily_flow_');
